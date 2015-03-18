@@ -9,12 +9,28 @@
 let s:save_cpo = &cpo
 set cpo&vim
 
+"Bror Custom"
+if !exists('g:jsdoc_author')
+  let g:jsdoc_author = 1
+  let g:jsdoc_author_name = 'Viktor Silfverstrom <viktor@silfverstrom.com>'
+endif
+
+if !exists('g:jsdoc_version')
+  let g:jsdoc_version = 1
+endif
+
+if !exists('g:jsdoc_since')
+  let g:jsdoc_since = 1
+endif
+
+"Regular"
+
 if !exists('g:jsdoc_input_description')
-  let g:jsdoc_input_description = 0
+  let g:jsdoc_input_description = 1
 endif
 " Prompt user for function description
 if !exists('g:jsdoc_additional_descriptions')
-  let g:jsdoc_additional_descriptions = 0
+  let g:jsdoc_additional_descriptions = 1
 endif
 " Prompt user for return type
 if !exists('g:jsdoc_return')
@@ -22,22 +38,22 @@ if !exists('g:jsdoc_return')
 endif
 " Prompt user for return description
 if !exists('g:jsdoc_return_description')
-  let g:jsdoc_return_description = 1
+  let g:jsdoc_return_description = 0
 endif
 " Allow prompt to input
 if !exists('g:jsdoc_allow_input_prompt')
-  let g:jsdoc_allow_input_prompt = 0
+  let g:jsdoc_allow_input_prompt = 1
 endif
 " Access tag (default 0)
 " http://usejsdoc.org/tags-access.html
 if !exists('g:jsdoc_access_descriptions')
-  let g:jsdoc_access_descriptions = 0
+  let g:jsdoc_access_descriptions = 1
 endif
 " Use underscore starting functions as private convention (default 0)
 " http://usejsdoc.org/tags-access.html
 " used only if g:jsdoc_access_descriptions > 0
 if !exists('g:jsdoc_underscore_private')
-  let g:jsdoc_underscore_private = 0
+  let g:jsdoc_underscore_private = 1
 endif
 " Enable to use ECMAScript6 shorthand method syntax.
 " /**
@@ -48,7 +64,7 @@ endif
 " foo(data) {
 " }
 if !exists('g:jsdoc_allow_shorthand')
-  let g:jsdoc_allow_shorthand = 0
+  let g:jsdoc_allow_shorthand = 1
 endif
 
 function! jsdoc#insert()
@@ -92,6 +108,12 @@ function! jsdoc#insert()
   if g:jsdoc_input_description == 1
     let l:desc = input('Description: ')
   endif
+  if g:jsdoc_version == 1
+    let l:version = input('Version: ')
+  endif
+  if g:jsdoc_since == 1
+    let l:since = input('Since: ')
+  endif
   call add(l:lines, l:space. '/**')
   call add(l:lines, l:space . ' * ' . l:desc)
   call add(l:lines, l:space . ' *')
@@ -104,6 +126,18 @@ function! jsdoc#insert()
     if g:jsdoc_additional_descriptions == 1
       call add(l:lines, l:space . ' * @name ' . l:funcName)
       call add(l:lines, l:space . ' * @function')
+    endif
+
+    if g:jsdoc_author == 1
+      call add(l:lines, l:space . ' * @author ' . g:jsdoc_author_name)
+    endif
+
+    if g:jsdoc_version == 1
+      call add(l:lines, l:space . ' * @version ' . l:version)
+    endif
+
+    if g:jsdoc_since == 1
+      call add(l:lines, l:space . ' * @since ' . l:since)
     endif
 
     if g:jsdoc_access_descriptions > 0
@@ -154,7 +188,7 @@ function! jsdoc#insert()
         if l:returnDescription != ''
           let l:returnDescription = ' ' . l:returnDescription
         endif
-        call add(l:lines, l:space . ' * @return {' . l:returnType . '}' . l:returnDescription)
+        call add(l:lines, l:space . ' * @return {' . l:returnType . '} ' . l:returnDescription)
       else
         call add(l:lines, l:space . ' * @return {undefined}')
       endif
